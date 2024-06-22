@@ -12,10 +12,12 @@ export enum ActionType {
     UPDATE = "UPDATE",
     ADD_MESSAGE = "ADD_MESSAGE",
     UPDATE_MESSAGE = "UPDATE_MESSAGE",
+    REMOVE_MESSAGE = "REMOVE_MESSAGE"
 }
 
+
 type MessageAction = {
-    type: ActionType.ADD_MESSAGE | ActionType.UPDATE_MESSAGE
+    type: ActionType.ADD_MESSAGE | ActionType.UPDATE_MESSAGE | ActionType.REMOVE_MESSAGE
     message: Message
 }
 
@@ -32,7 +34,7 @@ export const initState: State = {
     themeMode: "light",
     currentModel: "gpt-3.5-turbo",
     messageList: [],
-    streamingId: ""
+    streamingId: "" // 目前正在回复的消息的id，实现末尾光标
 }
 
 export function reducer(state: State, action: Action) {
@@ -49,6 +51,12 @@ export function reducer(state: State, action: Action) {
                     return action.message
                 }
                 return message
+            })
+            return { ...state, messageList }
+        }
+        case ActionType.REMOVE_MESSAGE: {
+            const messageList = state.messageList.filter((message) => {
+                return message.id !== action.message.id
             })
             return { ...state, messageList }
         }
